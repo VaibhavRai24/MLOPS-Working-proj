@@ -25,7 +25,7 @@ def load_params(params_path:str) ->dict:
         logging.error('File not found or the file is empty', params_path)
         raise e
     except Exception as e:
-        logging.error('Unexpected thing has takeen place, have a look')
+        logging.error('Unexpected thing has takeen place, have a look in load_params')
         raise e
     
     
@@ -36,14 +36,14 @@ def load_data(file_path: str) -> pd.DataFrame:
     """
     try:
         df = pd.read_csv(file_path)
-        df.fillna(" ", inplace= True)
-        logging.info('data has been loaded and the Nan has been filed',file_path)
+        df.fillna(' ', inplace= True)
+        logging.info('data has been loaded and the Nan has been filed')
         return df
     except pd.errors.ParserError as e:
         logging.error('Failed to parse the csv file ')
         raise
     except Exception as e:
-        logging.error('Unexcepted thing has been taken place , have a look')
+        logging.error('Unexcepted thing has been taken place , have a look in load_data', exc_info= True)
         raise
     
 def apply_the_bow(train_data:pd.DataFrame, test_data:pd.DataFrame, max_features:int) ->tuple:
@@ -83,7 +83,8 @@ def save_data(df:pd.DataFrame, file_path:str) -> None:
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok= True)
         df.to_csv(file_path, index= False)
-        logging.info('Data saved to ', file_path)
+        logging.info("Data saved to %s", file_path)
+
     except Exception as e:
         logging.error('Unexcepted error occurred during the process while saving the data')
         raise
@@ -93,8 +94,8 @@ def main():
         params = load_params('params.yaml')
         max_features = params['feature_engineering']['max_features']
         
-        train_data = load_data('./data/interim/train_processed.csv')
-        test_data = load_data('./data/interim/test_processed.csv')
+        train_data = load_data('./data/interim/train_data.csv')
+        test_data = load_data('./data/interim/test_data.csv')
         train_df, test_df = apply_the_bow(train_data= train_data, test_data= test_data, max_features= max_features)
         save_data(train_df, os.path.join("./data", "processed", "train_bow.csv"))
         save_data(test_df, os.path.join("./data", "processed", "test_bow.csv"))
